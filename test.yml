@@ -1,0 +1,23 @@
+---
+- name: Login no OpenShift e listagem de projetos
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Login no OpenShift
+      community.kubernetes.k8s_auth:
+        host: "{{ openshift_api_url }}"
+        api_key: "{{ bearer_token }}"
+        validate_certs: no
+
+    - name: Listar projetos no OpenShift
+      community.kubernetes.k8s_info:
+        api_version: project.openshift.io/v1
+        kind: Project
+      register: projects
+
+    - name: Exibir nomes dos projetos
+      debug:
+        msg: "Projeto: {{ item.metadata.name }}"
+      loop: "{{ projects.resources }}"
+    

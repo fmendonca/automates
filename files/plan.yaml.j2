@@ -1,0 +1,32 @@
+apiVersion: forklift.konveyor.io/v1beta1
+kind: Plan
+metadata:
+  generation: 1
+  name: migration-from-vmware
+  namespace: openshift-mtv
+spec:
+  archived: false
+  description: ''
+  map:
+    network:
+      name: migration-from-vmware-pc5mx
+      namespace: openshift-mtv
+    storage:
+      name: migration-from-vmware-6pt8x
+      namespace: openshift-mtv
+  provider:
+    destination:
+      name: host
+      namespace: openshift-mtv
+    source:
+      name: vmware
+      namespace: openshift-mtv
+  targetNamespace: vmimported
+  vms:
+    - hooks: []
+      id: vm-1542191
+    - hooks: []
+      id: vm-1542198
+    - hooks: []
+      id: vm-1542181
+  warm: false
