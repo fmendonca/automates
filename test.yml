@@ -1,5 +1,5 @@
 ---
-- name: Login no OpenShift e listagem de projetos
+- name: Cria novo projeto
   hosts: localhost
   gather_facts: no
 
@@ -7,11 +7,8 @@
 
     - name: Listar projetos no OpenShift
       kubernetes.core.k8s:
-        api_version: project.openshift.io/v1
-        kind: Project
+            name: testing
+            api_version: v1
+            kind: Namespace
+            state: present
       register: projects
-
-    - name: Exibir nomes dos projetos
-      debug:
-        msg: "Projeto: {{ item.metadata.name }}"
-      loop: "{{ projects.resources }}"
