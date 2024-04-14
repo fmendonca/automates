@@ -7,4 +7,4 @@
     - name: Criar plano de migração do VMWARE
       kubernetes.core.k8s:
         state: present
-        src: file/plan.yaml
+        src: plan.yaml
