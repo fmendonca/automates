@@ -4,7 +4,7 @@
   gather_facts: no
 
   tasks:
-    - name: Iniciar o plano de migração
+    - name: Criar plano de migração do VMWARE
       kubernetes.core.k8s:
         state: present
-        src: file/start_migration.yaml
+        src: file/plan.yaml
