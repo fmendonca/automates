@@ -7,4 +7,4 @@
     - name: Iniciar o plano de migração
       kubernetes.core.k8s:
         state: present
-        src: file/start_migration.yaml
+        src: start_migration.yaml
