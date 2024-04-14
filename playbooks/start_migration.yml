@@ -1,0 +1,16 @@
+---
+- name: Inicia a migração do vmware
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+
+    - name: Criar plano de migração do VMWARE
+      kubernetes.core.k8s:
+        state: present
+        src: file/plan.yaml
+
+    - name: Iniciar o plano de migração
+      kubernetes.core.k8s:
+        state: present
+        src: file/start_migration.yaml
