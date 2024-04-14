@@ -1,7 +1,7 @@
 apiVersion: forklift.konveyor.io/v1beta1
 kind: Migration
 metadata:
-  name: migration_ansible
+  name: migration-ansible
   namespace: openshift-mtv
 spec:
   plan:
