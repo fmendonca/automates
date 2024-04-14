@@ -5,13 +5,13 @@
 
   tasks:
     - name: Login no OpenShift
-      kubernetes.core.k8s_auth:
+      kubernetes.core.k8s:
         host: "{{ openshift_api_url }}"
         api_key: "{{ bearer_token }}"
         validate_certs: no
 
     - name: Listar projetos no OpenShift
-      kubernetes.core.k8s_info:
+      kubernetes.core.k8s:
         api_version: project.openshift.io/v1
         kind: Project
       register: projects
@@ -20,4 +20,3 @@
       debug:
         msg: "Projeto: {{ item.metadata.name }}"
       loop: "{{ projects.resources }}"
-    
