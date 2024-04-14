@@ -9,10 +9,10 @@ spec:
   description: ''
   map:
     network:
-      name: migration-from-vmware-pc5mx
+      name: mapping-segment
       namespace: openshift-mtv
     storage:
-      name: migration-from-vmware-6pt8x
+      name: mapping-datastore
       namespace: openshift-mtv
   provider:
     destination:
