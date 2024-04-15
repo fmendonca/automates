@@ -87,7 +87,7 @@
 
     - name: Run convert2rhel to convert CentOS to RHEL
       ansible.builtin.command:
-        cmd: convert2rhel --enablerepo convert2rhel 
+        cmd: convert2rhel --enablerepo convert2rhel --debug --restart -y 
       register: conversion_result
 
     - name: Output the results of the conversion
