@@ -5,15 +5,21 @@
 
   vars:
     openshift_namespace: "openshift-mtv"
+    check_interval: 40
+    max_retries: 60  
   tasks:
 
     - name: Fetch Migration Plan Statuses from OpenShift
-      k8s_info:
-        api_version: forklift.konveyor.io/v1beta1  # Adjust the api_version based on your installation
-        kind: Plan  # This might be 'Plan' instead of 'MigrationPlan', depending on your MTV version
+      kubernetes.core.k8s:
+        api_version: forklift.konveyor.io/v1beta1  
+        kind: Plan  
         namespace: "{{ openshift_namespace }}"
       register: migration_plans
+      until: migration_plans.resources | json_query('[?status.conditions[?type==`Ready` && status==`True`]].status') | length == migration_plans.resources | length
+      retries: "{{ max_retries }}"
+      delay: "{{ check_interval }}"
+      failed_when: migration_plans.resources | json_query('[?status.conditions[?type==`Failed`]].status') | length > 0
 
     - name: Display Migration Plan Statuses
       debug:
-        var: migration_plans.resources
+        msg: "All migrations are completed successfully."
