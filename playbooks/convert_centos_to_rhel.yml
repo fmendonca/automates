@@ -8,26 +8,37 @@
     organization_id: "14022285"
 
   tasks:
-    - name: Install convert2rhel
+    - name: Ensure the system is updated to latest packages
       yum:
+        name: '*'
+        state: latest
+
+    - name: Ensure the repository for convert2rhel is present
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/convert2rhel.repo
+        content: |
+          [convert2rhel]
+          name=Convert to RHEL Repository
+          baseurl=https://ftp.redhat.com/redhat/convert2rhel/8
+          enabled=1
+          gpgcheck=0
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Install convert2rhel
+      ansible.builtin.yum:
         name: convert2rhel
         state: present
 
-    - name: Remove CentOS repositories
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
-        - /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+    - name: Run convert2rhel to convert CentOS to RHEL
+      ansible.builtin.command:
+        cmd: convert2rhel --no-rpm-va --disable-submgr --enablerepo convert2rhel --yes
+      register: conversion_result
 
-    - name: Import Red Hat GPG key
-      rpm_key:
-        state: present
-        key: https://www.redhat.com/security/data/fd431d51.txt
-
-    - name: Convert CentOS to RHEL
-      command: convert2rhel --org "{{ organization_id }}" --activationkey "{{ activation_key }}" --skip-rpm-va --yes
+    - name: Output the results of the conversion
+      ansible.builtin.debug:
+        msg: "{{ conversion_result.stdout }}"
 
     - name: Register system with subscription-manager
       redhat_subscription:
@@ -37,7 +48,3 @@
         pool: '^Red Hat Enterprise Server$'
         auto_attach: true
 
-    - name: Ensure the system is updated to latest packages
-      yum:
-        name: '*'
-        state: latest
