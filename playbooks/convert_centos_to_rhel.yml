@@ -4,7 +4,7 @@
   become: true
 
   vars:
-    activation_key: "automates"
+    activationkey: "automates"
     organization_id: "14022285"
 
   tasks:
@@ -69,6 +69,17 @@
         owner: root
         group: root
 
+    - name: Ensure the repository for convert2rhel is present
+      ansible.builtin.copy:
+        dest: /etc/convert2rhel.ini
+        content: |
+          [subscription_manager]
+          org = "{{ organization_id }}""
+          activation_key = "{{ activationkey }}"
+        mode: '0644'
+        owner: root
+        group: root
+
     - name: Install convert2rhel
       ansible.builtin.yum:
         name: convert2rhel
@@ -76,7 +87,7 @@
 
     - name: Run convert2rhel to convert CentOS to RHEL
       ansible.builtin.command:
-        cmd: convert2rhel --no-rpm-va --disable-submgr --enablerepo convert2rhel --yes
+        cmd: convert2rhel --enablerepo convert2rhel 
       register: conversion_result
 
     - name: Output the results of the conversion
