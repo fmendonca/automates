@@ -1,0 +1,11 @@
+---
+- name: Demo Automation
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Arguardando a Migração
+      redhat.openshift_virtualization.kubevirt_vm_info:
+        name: winweb01
+        namespace: vmimported
+        wait: true
