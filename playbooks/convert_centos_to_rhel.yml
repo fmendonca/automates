@@ -61,7 +61,7 @@
         content: |
           [convert2rhel]
           name=Convert to RHEL Repository
-          baseurl=https://cdn-public.redhat.com/content/public/addon/dist/convert2rhel8/8/x86_64/os/
+          baseurl=https://cdn-public.redhat.com/content/public/addon/dist/convert2rhel/server/7/7Server/x86_64/os/
           enabled=1
           gpgcheck=1
           gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
@@ -87,7 +87,7 @@
 
     - name: Run convert2rhel to convert CentOS to RHEL
       ansible.builtin.command:
-        cmd: convert2rhel --enablerepo convert2rhel --debug --restart -y 
+        cmd: convert2rhel --debug --restart -y 
       register: conversion_result
 
     - name: Output the results of the conversion
