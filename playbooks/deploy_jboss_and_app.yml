@@ -9,13 +9,21 @@
     jboss_home: "/opt/jboss-eap"  # Adjust the path as necessary
 
   tasks:
-    - name: Ensure the installation directory exists
+
+    - name: Prerequisitos para o playbook
+      ansible.builtin.yum:
+        name: 
+          - unzip
+          - bzip2
+        state: latest
+        
+    - name: Garantir que o home folder do jboss existe
       ansible.builtin.file:
         path: "{{ jboss_home }}"
         state: directory
         mode: '0755'
 
-    - name: Download JBoss EAP ZIP archive
+    - name: Download JBoss EAP ZIP
       ansible.builtin.get_url:
         url: "{{ jboss_eap_zip_url }}"
         dest: "/tmp/jboss-eap.zip"
@@ -34,7 +42,7 @@
         dest: "{{ jboss_home }}/standalone/deployments/helloworld.war"
         mode: '0644'
 
-    - name: Open port 8080 for JBoss EAP on firewalld
+    - name: Abrir porta 8080 for JBoss EAP no firewalld
       ansible.posix.firewalld:
         port: "8080/tcp"
         permanent: true
@@ -46,7 +54,7 @@
         cmd: "{{ jboss_home }}/bin/standalone.sh -b 0.0.0.0 &"
         creates: "{{ jboss_home }}/standalone/log/server.log"  # Adjust to check if server is already running
 
-    - name: Check Deployment Status
+    - name: Check Deployment
       ansible.builtin.uri:
         url: "http://localhost:8080/helloworld"
         return_content: yes
