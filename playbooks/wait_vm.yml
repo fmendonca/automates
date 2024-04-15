@@ -10,7 +10,7 @@
   tasks:
 
     - name: Fetch Migration Plan Statuses from OpenShift
-      kubernetes.core.k8s_info:
+      k8s_info:
         api_version: forklift.konveyor.io/v1beta1  
         kind: Plan  
         namespace: "{{ openshift_namespace }}"
