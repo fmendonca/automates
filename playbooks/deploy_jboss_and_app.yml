@@ -34,6 +34,13 @@
         dest: "{{ jboss_home }}/standalone/deployments/helloworld.war"
         mode: '0644'
 
+    - name: Open port 8080 for JBoss EAP on firewalld
+      ansible.posix.firewalld:
+        port: "8080/tcp"
+        permanent: true
+        state: enabled
+        immediate: true
+
     - name: Start JBoss EAP Standalone Server
       ansible.builtin.command:
         cmd: "{{ jboss_home }}/bin/standalone.sh -b 0.0.0.0 &"
