@@ -23,9 +23,3 @@
     - name: Display Migration Plan Statuses
       debug:
         msg: "All migrations are completed successfully."
-
-    - name: List VMs in Completed Migration Plans
-      debug:
-        msg: "Plan '{{ item.metadata.name }}' VMs: {{ item.spec.vms | default('No VMs listed') }}"
-      loop: "{{ migration_plans.resources }}"
-      when: item.status.conditions | json_query('[?type==`Ready` && status==`True`]').status == 'True'
