@@ -76,7 +76,7 @@
           [subscription_manager]
           org = "{{ organization_id }}""
           activation_key = "{{ activationkey }}"
-        mode: '0644'
+        mode: '0600'
         owner: root
         group: root
 
