@@ -42,13 +42,6 @@
         dest: "{{ jboss_home }}/jboss-eap-7.4/standalone/deployments/helloworld.war"
         mode: '0644'
 
-    - name: Abrir porta 8080 for JBoss EAP no firewalld
-      ansible.posix.firewalld:
-        port: "8080/tcp"
-        permanent: true
-        state: enabled
-        immediate: true
-
     - name: Start JBoss EAP Standalone Server
       ansible.builtin.command:
         cmd: "{{ jboss_home }}/jboss-eap-7.4/bin/standalone.sh -b 0.0.0.0 &"
@@ -66,3 +59,4 @@
     - name: Output Deployment Success
       ansible.builtin.debug:
         msg: "HelloWorld application deployed successfully and is responding."
+        
