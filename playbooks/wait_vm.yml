@@ -7,6 +7,11 @@
     openshift_namespace: "openshift-mtv"
   tasks:
 
+    - name: Login to OpenShift
+      command: oc login --token={{ lookup('env', 'OC_TOKEN') }} --server={{ lookup('env', 'OC_SERVER') }}
+      changed_when: false
+      when: lookup('env', 'OC_TOKEN') is defined and lookup('env', 'OC_SERVER') is defined
+
     - name: Listar todos os planos de migração
       command: oc get migrationplan -n {{ openshift_namespace }} -o json
       register: migration_plans
