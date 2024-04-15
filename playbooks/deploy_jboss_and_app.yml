@@ -16,7 +16,7 @@
           - unzip
           - bzip2
         state: latest
-        
+
     - name: Garantir que o home folder do jboss existe
       ansible.builtin.file:
         path: "{{ jboss_home }}"
@@ -39,7 +39,7 @@
     - name: Download HelloWorld WAR
       ansible.builtin.get_url:
         url: "{{ helloworld_war_url }}"
-        dest: "{{ jboss_home }}/standalone/deployments/helloworld.war"
+        dest: "{{ jboss_home }}/jboss-eap-7.4/standalone/deployments/helloworld.war"
         mode: '0644'
 
     - name: Abrir porta 8080 for JBoss EAP no firewalld
@@ -51,8 +51,8 @@
 
     - name: Start JBoss EAP Standalone Server
       ansible.builtin.command:
-        cmd: "{{ jboss_home }}/bin/standalone.sh -b 0.0.0.0 &"
-        creates: "{{ jboss_home }}/standalone/log/server.log"  # Adjust to check if server is already running
+        cmd: "{{ jboss_home }}/jboss-eap-7.4/bin/standalone.sh -b 0.0.0.0 &"
+        creates: "{{ jboss_home }}/jboss-eap-7.4/standalone/log/server.log"  # Adjust to check if server is already running
 
     - name: Check Deployment
       ansible.builtin.uri:
