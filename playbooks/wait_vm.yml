@@ -8,9 +8,9 @@
   tasks:
 
     - name: Fetch Migration Plan Statuses from OpenShift
-      k8s_info:
-        api_version: migration.openshift.io/v1alpha1
-        kind: MigrationPlan
+      kubernetes.core.k8s:
+        api_version: forklift.konveyor.io/v1beta1
+        kind: Migration
         namespace: "{{ openshift_namespace }}"
         verify_ssl: no  # Set to yes in production if your cluster uses signed certificates
       register: migration_plans
