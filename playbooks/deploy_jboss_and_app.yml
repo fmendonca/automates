@@ -15,6 +15,7 @@
         name: 
           - unzip
           - bzip2
+          - java-1.8.0-openjdk.x86_64
         state: latest
 
     - name: Garantir que o home folder do jboss existe
@@ -59,4 +60,3 @@
     - name: Output Deployment Success
       ansible.builtin.debug:
         msg: "HelloWorld application deployed successfully and is responding."
-        
