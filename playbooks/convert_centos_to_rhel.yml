@@ -1,0 +1,43 @@
+---
+- name: Convert CentOS 8 to RHEL 8
+  hosts: centos_vm
+  become: true
+
+  vars:
+    activation_key: "automates"
+    organization_id: "14022285"
+
+  tasks:
+    - name: Install convert2rhel
+      yum:
+        name: convert2rhel
+        state: present
+
+    - name: Remove CentOS repositories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/yum.repos.d/CentOS-Linux-BaseOS.repo
+        - /etc/yum.repos.d/CentOS-Linux-AppStream.repo
+
+    - name: Import Red Hat GPG key
+      rpm_key:
+        state: present
+        key: https://www.redhat.com/security/data/fd431d51.txt
+
+    - name: Convert CentOS to RHEL
+      command: convert2rhel --org "{{ organization_id }}" --activationkey "{{ activation_key }}" --skip-rpm-va --yes
+
+    - name: Register system with subscription-manager
+      redhat_subscription:
+        state: present
+        activationkey: "{{ activatio_key }}"
+        org_id: "{{ organization_id }}"
+        pool: '^Red Hat Enterprise Server$'
+        auto_attach: true
+
+    - name: Ensure the system is updated to latest packages
+      yum:
+        name: '*'
+        state: latest
