@@ -19,9 +19,10 @@
         content: |
           [convert2rhel]
           name=Convert to RHEL Repository
-          baseurl=https://ftp.redhat.com/redhat/convert2rhel/8
+          baseurl=https://cdn-public.redhat.com/content/public/addon/dist/convert2rhel8/8/x86_64/os/
           enabled=1
-          gpgcheck=0
+          gpgcheck=1
+          gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
         mode: '0644'
         owner: root
         group: root
