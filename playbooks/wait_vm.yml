@@ -7,19 +7,15 @@
     openshift_namespace: "openshift-mtv"
   tasks:
 
-    - name: Login to OpenShift
-      command: oc login --token={{ lookup('env', 'OC_TOKEN') }} --server={{ lookup('env', 'OC_SERVER') }}
-      changed_when: false
-      when: lookup('env', 'OC_TOKEN') is defined and lookup('env', 'OC_SERVER') is defined
-
-    - name: Listar todos os planos de migração
-      command: oc get migrationplan -n {{ openshift_namespace }} -o json
+    - name: Fetch Migration Plan Statuses from OpenShift
+      k8s_info:
+        api_version: migration.openshift.io/v1alpha1
+        kind: MigrationPlan
+        namespace: "{{ openshift_namespace }}"
+        verify_ssl: no  # Set to yes in production if your cluster uses signed certificates
       register: migration_plans
 
-    - name: Realizando Parser do status de migração
-      set_fact:
-        migration_status: "{{ (migration_plans.stdout | from_json).items | map(attribute='status') | list }}"
-
-    - name: Informando o Status de migração
+    - name: Display Migration Plan Statuses
       debug:
-        msg: "Migration Plan Statuses: {{ migration_status }}"
+        msg: "{{ item.status }}"
+      loop: "{{ migration_plans.resources }}"
