@@ -1,11 +1,20 @@
 ---
 - name: Demo Automation
   hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
+  vars:
+    openshift_namespace: "openshift-mtv"
   tasks:
-    - name: Arguardando a Migração
-      redhat.openshift_virtualization.kubevirt_vm_info:
-        name: winweb01
-        namespace: vmimported
-        wait: true
+
+    - name: Listar todos os planos de migração
+      command: oc get migrationplan -n {{ openshift_namespace }} -o json
+      register: migration_plans
+
+    - name: Realizando Parser do status de migração
+      set_fact:
+        migration_status: "{{ (migration_plans.stdout | from_json).items | map(attribute='status') | list }}"
+
+    - name: Informando o Status de migração
+      debug:
+        msg: "Migration Plan Statuses: {{ migration_status }}"
