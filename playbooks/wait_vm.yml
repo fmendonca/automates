@@ -8,14 +8,12 @@
   tasks:
 
     - name: Fetch Migration Plan Statuses from OpenShift
-      kubernetes.core.k8s:
-        api_version: forklift.konveyor.io/v1beta1
-        kind: Migration
+      k8s_info:
+        api_version: forklift.konveyor.io/v1beta1  # Adjust the api_version based on your installation
+        kind: Plan  # This might be 'Plan' instead of 'MigrationPlan', depending on your MTV version
         namespace: "{{ openshift_namespace }}"
-        verify_ssl: no  # Set to yes in production if your cluster uses signed certificates
       register: migration_plans
 
     - name: Display Migration Plan Statuses
       debug:
-        msg: "{{ item.status }}"
-      loop: "{{ migration_plans.resources }}"
+        var: migration_plans.resources
