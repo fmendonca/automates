@@ -83,11 +83,15 @@
         cmd: convert2rhel -k "{{ activationkey }}" -o "{{ organization_id }}" --debug --restart -y 
       register: conversion_result
 
-    - name: Output the results of the conversion
+    - name: Aguardando a maquina reiniciar
+      ansible.builtin.pause:
+        seconds: 60
+
+    - name: Saida do resultado da Conversao
       ansible.builtin.debug:
         msg: "{{ conversion_result.stdout }}"
 
-    - name: Register system with subscription-manager
+    - name: Registrando o sistema via subscription-manager
       redhat_subscription:
         state: present
         activationkey: "{{ activatio_key }}"
