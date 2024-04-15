@@ -69,16 +69,6 @@
         owner: root
         group: root
 
-    - name: Ensure the repository for convert2rhel is present
-      ansible.builtin.copy:
-        dest: /etc/convert2rhel.ini
-        content: |
-          [subscription_manager]
-          org = "{{ organization_id }}"
-          activation_key = "{{ activationkey }}"
-        mode: '0600'
-        owner: root
-        group: root
 
     - name: Install convert2rhel
       ansible.builtin.yum:
@@ -87,7 +77,7 @@
 
     - name: Run convert2rhel to convert CentOS to RHEL
       ansible.builtin.command:
-        cmd: convert2rhel --debug --restart -y 
+        cmd: convert2rhel -k "{{ activationkey }}" -o "{{ organization_id }}" --debug --restart -y 
       register: conversion_result
 
     - name: Output the results of the conversion
