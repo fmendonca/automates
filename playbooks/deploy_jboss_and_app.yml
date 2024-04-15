@@ -1,0 +1,53 @@
+---
+- name: Deploy Web Server and Application
+  hosts: all
+  become: true
+
+  vars:
+    jboss_eap_zip_url: "http://20.51.193.59/jboss-eap.zip"  # Change this URL
+    helloworld_war_url: "http://20.51.193.59/helloworld.war"  # Change this URL
+    jboss_home: "/opt/jboss-eap"  # Adjust the path as necessary
+
+  tasks:
+    - name: Ensure the installation directory exists
+      ansible.builtin.file:
+        path: "{{ jboss_home }}"
+        state: directory
+        mode: '0755'
+
+    - name: Download JBoss EAP ZIP archive
+      ansible.builtin.get_url:
+        url: "{{ jboss_eap_zip_url }}"
+        dest: "/tmp/jboss-eap.zip"
+        mode: '0644'
+
+    - name: Unzip JBoss EAP
+      ansible.builtin.unarchive:
+        src: "/tmp/jboss-eap.zip"
+        dest: "{{ jboss_home }}"
+        remote_src: yes
+        creates: "{{ jboss_home }}/bin/standalone.sh"  # Change based on actual structure
+
+    - name: Download HelloWorld WAR
+      ansible.builtin.get_url:
+        url: "{{ helloworld_war_url }}"
+        dest: "{{ jboss_home }}/standalone/deployments/helloworld.war"
+        mode: '0644'
+
+    - name: Start JBoss EAP Standalone Server
+      ansible.builtin.command:
+        cmd: "{{ jboss_home }}/bin/standalone.sh -b 0.0.0.0 &"
+        creates: "{{ jboss_home }}/standalone/log/server.log"  # Adjust to check if server is already running
+
+    - name: Check Deployment Status
+      ansible.builtin.uri:
+        url: "http://localhost:8080/helloworld"
+        return_content: yes
+      register: webpage
+      until: "'Hello World' in webpage.content"
+      retries: 10
+      delay: 10
+
+    - name: Output Deployment Success
+      ansible.builtin.debug:
+        msg: "HelloWorld application deployed successfully and is responding."
