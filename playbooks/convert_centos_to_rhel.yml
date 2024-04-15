@@ -8,11 +8,15 @@
     organization_id: "14022285"
 
   tasks:
+
     - name: Ensure the system is updated to latest packages
-      yum:
+      ansible.builtin.yum:
         name: '*'
         state: latest
 
+    - name: Reboot for update
+      ansible.builtin.reboot:
+        reboot_timeout: 60
 
     - name: Ensure the gpg repo for convert2rhel is present
       ansible.builtin.copy:
@@ -68,7 +72,6 @@
         mode: '0644'
         owner: root
         group: root
-
 
     - name: Install convert2rhel
       ansible.builtin.yum:
