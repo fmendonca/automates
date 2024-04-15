@@ -74,7 +74,7 @@
         dest: /etc/convert2rhel.ini
         content: |
           [subscription_manager]
-          org = "{{ organization_id }}""
+          org = "{{ organization_id }}"
           activation_key = "{{ activationkey }}"
         mode: '0600'
         owner: root
