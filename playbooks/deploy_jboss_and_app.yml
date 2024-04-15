@@ -45,7 +45,7 @@
 
     - name: Start JBoss EAP Standalone Server
       ansible.builtin.shell:
-        cmd: "{{ jboss_home }}/jboss-eap-7.4/bin/standalone.sh -b 0.0.0.0 &"
+        cmd: "nohup {{ jboss_home }}/jboss-eap-7.4/bin/standalone.sh -b 0.0.0.0 &"
 
     - name: Check Deployment
       ansible.builtin.uri:
