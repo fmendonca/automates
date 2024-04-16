@@ -1,21 +1,28 @@
----
-- name: Add new NIC to a VM in OpenShift Virtualization and reboot the VM
-  hosts: localhost  # This playbook runs locally to interact with the Kubernetes API
+- name: Add a second NIC to a VM in OpenShift Virtualization
+  hosts: localhost
   gather_facts: false
 
   vars:
     api_version: kubevirt.io/v1
 
+
   tasks:
-    - name: Get current VM definition
+    - name: Pegar a nova configuracao da VM
       kubernetes.core.k8s_info:
         api_version: "{{ api_version }}"
         kind: VirtualMachine
         namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
-      register: vm_info
+      register: vm_config
 
-    - name: Add new NIC to VM definition
+    - name: Prepare new interface and network definitions
+      set_fact:
+        new_interfaces: "{{ vm_config.resources[0].spec.template.spec.domain.devices.interfaces | default([]) + 
+                           [{'name': new_interface_name, 'model': new_interface_model, 'bridge': {}}] }}"
+        new_networks: "{{ vm_config.resources[0].spec.template.spec.networks | default([]) + 
+                         [{'name': new_interface_name, 'pod': {}}] }}"
+
+    - name: Atualizando a VM com a nova NIC
       kubernetes.core.k8s:
         state: present
         api_version: "{{ api_version }}"
@@ -28,15 +35,8 @@
               spec:
                 domain:
                   devices:
-                    interfaces:
-                      - name: "{{ interface_name }}"
-                        model: "{{ interface_model }}"
-                        bridge: {}
-                networks:
-                  - name: "{{ interface_name }}"
-                    pod: {}
-      when: vm_info.resources[0].spec.template.spec.domain.devices.interfaces is not defined or
-            (interface_name not in vm_info.resources[0].spec.template.spec.domain.devices.interfaces | map(attribute='name'))
+                    interfaces: "{{ new_interfaces }}"
+                networks: "{{ new_networks }}"
 
     - name: Reboot VM to apply NIC changes
       kubernetes.core.k8s:
@@ -48,9 +48,8 @@
         definition:
           spec:
             running: false
-      register: vm_shutdown
 
-    - name: Wait for VM to shutdown
+    - name: Aguardando a VM desligar
       kubernetes.core.k8s_info:
         api_version: "{{ api_version }}"
         kind: VirtualMachineInstance
@@ -58,7 +57,7 @@
         name: "{{ vm_name }}"
       register: vm_state
       until: vm_state.resources | length == 0
-      retries: 30
+      retries: 20
       delay: 10
 
     - name: Start VM after shutdown
@@ -72,6 +71,6 @@
           spec:
             running: true
 
-    - name: Output NIC addition and reboot result
+    - name: Output NIC addition result
       ansible.builtin.debug:
-        msg: "New NIC connected to the Pod network, named '{{ interface_name }}', has been added to the VM '{{ vm_name }}' and the VM was successfully rebooted."
+        msg: "A second NIC connected to the Pod network has been added to the VM '{{ vm_name }}' and the VM was successfully rebooted."
