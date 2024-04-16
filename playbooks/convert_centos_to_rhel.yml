@@ -82,20 +82,3 @@
       ansible.builtin.command:
         cmd: convert2rhel -k "{{ activationkey }}" -o "{{ organization_id }}" --debug --restart -y 
       register: conversion_result
-
-    - name: Aguardando a maquina reiniciar
-      ansible.builtin.pause:
-        seconds: 60
-
-    - name: Saida do resultado da Conversao
-      ansible.builtin.debug:
-        msg: "{{ conversion_result.stdout }}"
-
-    - name: Registrando o sistema via subscription-manager
-      redhat_subscription:
-        state: present
-        activationkey: "{{ activatio_key }}"
-        org_id: "{{ organization_id }}"
-        pool: '^Red Hat Enterprise Server$'
-        auto_attach: true
-

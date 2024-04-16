@@ -41,7 +41,7 @@
       ansible.builtin.get_url:
         url: "{{ helloworld_war_url }}"
         dest: "{{ jboss_home }}/jboss-eap-7.4/standalone/deployments/helloworld.war"
-        mode: '0644'
+        mode: '0755'
 
     - name: Start JBoss EAP Standalone Server
       ansible.builtin.shell:
@@ -53,7 +53,7 @@
         return_content: yes
       register: webpage
       until: "'Hello World' in webpage.content"
-      retries: 10
+      retries: 15
       delay: 10
 
     - name: Output Deployment Success
