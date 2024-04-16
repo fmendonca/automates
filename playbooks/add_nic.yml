@@ -6,7 +6,6 @@
   vars:
     api_version: kubevirt.io/v1
 
-
   tasks:
     - name: Get current VM definition
       kubernetes.core.k8s_info:
